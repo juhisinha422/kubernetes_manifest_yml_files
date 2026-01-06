@@ -1,0 +1,198 @@
+Kubernetes API Versions and Categories
+1️⃣ Core API Group (Application Basics)
+apiVersion: v1
+
+This is the core (legacy) API group.
+
+Used for:
+
+Pod: Smallest deployable unit.
+
+Service: Expose applications internally/externally.
+
+ConfigMap: App configuration.
+
+Secret: Sensitive data.
+
+Namespace: Logical isolation.
+
+Node: Cluster nodes.
+
+PersistentVolumeClaim: Storage request.
+
+Example
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  type: ClusterIP
+  selector:
+    app: myapp
+  ports:
+    - port: 80
+
+2️⃣ Workloads / Application Deployment
+apiVersion: apps/v1
+
+Used for managing workloads and deploying applications.
+
+Used for:
+
+Deployment: Stateless apps.
+
+StatefulSet: Stateful apps, including databases.
+
+DaemonSet: One pod per node.
+
+ReplicaSet: Pod replication.
+
+Example
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+
+3️⃣ Networking APIs
+apiVersion: networking.k8s.io/v1
+
+Controls traffic flow inside and outside the cluster.
+
+Used for:
+
+Ingress: HTTP/HTTPS routing.
+
+NetworkPolicy: Pod-to-pod traffic rules.
+
+Example
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  rules:
+    - host: myapp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-service
+                port:
+                  number: 80
+
+4️⃣ Storage / Database Related APIs
+apiVersion: storage.k8s.io/v1
+
+Defines storage classes, volumes, and related resources.
+
+Used for:
+
+StorageClass: Define storage backend.
+
+PersistentVolumeClaim: Request storage from a specific class.
+
+Example
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-storage
+provisioner: kubernetes.io/aws-ebs
+
+5️⃣ Configuration & Autoscaling
+apiVersion: autoscaling/v2
+
+Used for scaling applications automatically.
+
+Used for:
+
+HorizontalPodAutoscaler: Scales pods based on CPU/memory usage.
+
+Example
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx
+  minReplicas: 2
+  maxReplicas: 10
+
+6️⃣ Security & Access Control
+6.1 RBAC
+apiVersion: rbac.authorization.k8s.io/v1
+
+Used to define roles and permissions.
+
+Used for:
+
+Role: Permissions within a namespace.
+
+ClusterRole: Cluster-wide permissions.
+
+Example
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+
+6.2 Pod Security
+apiVersion: policy/v1
+
+For defining pod disruption budgets and security policies.
+
+7️⃣ Batch Jobs & CronJobs
+apiVersion: batch/v1
+
+Used for managing batch and scheduled jobs.
+
+Used for:
+
+Job: One-time tasks.
+
+CronJob: Scheduled tasks.
+
+Example
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-job
+spec:
+  schedule: "0 2 * * *"
+
+8️⃣ Custom Resources (CRDs)
+apiVersion: <group>/<version>
+
+Used by operators and for creating custom Kubernetes resources.
+
+9️⃣ Quick Cheat Sheet
+Category	apiVersion
+Core Objects	v1
+Applications	apps/v1
+Networking	networking.k8s.io/v1
+Storage	storage.k8s.io/v1
+Autoscaling	autoscaling/v2
+Jobs	batch/v1
+Security (RBAC)	rbac.authorization.k8s.io/v1
+Custom Resources	<custom-group>/v1
